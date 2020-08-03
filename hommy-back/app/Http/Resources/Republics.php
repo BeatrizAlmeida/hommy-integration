@@ -22,6 +22,8 @@ class Republics extends JsonResource
             'district'=>$this->district,
             'address'=>$this->address,
             'user_id'=>$this->user_id,
+            'photo'=>$this->photo,
+
         ];
     }
 }
