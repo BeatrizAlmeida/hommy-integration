@@ -8,6 +8,8 @@ use App\Republic;
 use App\User;
 use App\Room;
 use App\UserRequest;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\Republics as RepublicResource;
 
 class RepublicController extends Controller
 
@@ -20,7 +22,7 @@ class RepublicController extends Controller
 
     public function showRepublic($id){
         $republic = Republic::findOrFail($id);
-        return response()->json($republic);
+        return response()->json( new RepublicResource($republic));   
     }
 
     public function listRepublic(Request $request){
@@ -29,8 +31,15 @@ class RepublicController extends Controller
             $republic->where('name','LIKE','%'.$request->name.'%');
         if ($request->address)
             $republic->where('address','LIKE','%'.$request->address.'%');
+        if($request->comments){
+            $republic = Republic::has('comments','>=',$request->comments);
+        }
         $search = $republic->get();
-        return response()->json($search);
+        $ids=$search->pluck('id');
+        $paginator=Republic::wherein('id',$ids)->paginate(3);
+        $republics= RepublicResource::collection($paginator);
+        $last = $republics->lastPage();
+        return response()->json([$paginator,$last] );
     }
 
     public function softdeletedRepublics(Request $request){
@@ -38,7 +47,7 @@ class RepublicController extends Controller
         return response()->json($result);
     }
 
-    public function updateRepublic(RepublicRequest $request, $id){
+    public function updateRepublic(Request $request, $id){
         $republic = Republic::findOrFail($id);
         if($request->name){
             $republic->name = $request->name;
@@ -58,6 +67,19 @@ class RepublicController extends Controller
 
         if($request->description){
             $republic->description = $request->description;
+        }
+
+        if($request->user_id){
+            $republic->user_id = $request->user_id;
+        }
+
+        if($request->photo){
+            Storage::delete('localPhotos/'. $republic->photo);
+            $image=base64_decode($request->photo);
+            $filename=uniqid();
+            $path=storage_path('/app/localPhotos/'.$filename);
+            file_put_contents($path,$image);
+            $republic->photo=$path;
         }
 
         $republic->save();

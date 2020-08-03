@@ -37,6 +37,8 @@ class RepublicRequest extends FormRequest
             'address' => 'required',
             'city' => 'required',
             'district' => 'required',
+            'photo' => 'file|image|mimes:jpeg,png,gif,webp|max:2048',
+
         ];
     }
 

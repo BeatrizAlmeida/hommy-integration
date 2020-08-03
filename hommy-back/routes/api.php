@@ -12,8 +12,6 @@ Route::get('listRepublic', 'RepublicController@listRepublic');
 
 Route::put('updateRepublic/{id}', 'RepublicController@updateRepublic');
 
-Route::delete('deleteRepublic/{id}', 'RepublicController@deleteRepublic');
-
 Route::put('addUser/{id}/{republic_id}', 'RepublicController@addUser');
 
 Route::put('removeUser/{republic_id}', 'RepublicController@removeUser');
@@ -35,6 +33,9 @@ Route::delete('deleteUser/{id}', 'UserController@deleteUser');
 
 Route::get('listUser', 'UserController@listUser');
 
+Route::put('updateUser/{id}', 'UserController@updateUser');
+
+
 Route::put('alugar/{user_id}/{republic_id}', 'UserController@alugar');
 
 Route::put('retornarRepublica/{id}', 'UserController@retornarRepublica');
@@ -50,11 +51,13 @@ Route::put('removeAluguel/{republic_id}/{user_id}', 'UserController@removeAlugue
 Route::get('listRepublic', 'RepublicController@listRepublic');
 
 Route::post('register', 'API\PassportController@register');
-Route::post('login', 'API\PassportController@login');
+Route::post('login', 'API\PassportController@login')->name('login');
 
 Route::group(['middleware'=>'auth:api'], function(){
     Route::get('logout', 'API\PassportController@logout');
     Route::post('getDetails', 'API\PassportController@getDetails');
+    Route::delete('deleteRepublic/{id}', 'RepublicController@deleteRepublic')->middleware('deleteRepublic');
+
 });
 
 

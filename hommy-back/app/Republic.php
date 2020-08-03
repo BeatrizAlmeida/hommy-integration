@@ -7,6 +7,7 @@ use App\Http\Requests\RepublicRequest;
 use Illuminate\Http\Request;
 use App\User;
 use App\Comment;
+use Illuminate\Support\Facades\Storage;
 
 
 class Republic extends Model
@@ -35,6 +36,19 @@ class Republic extends Model
         $this->district = $request->district;
         $this->description = $request->description;
         $this->user_id = $request->user_id;
+        if (!Storage::exists('localPhotos/')){
+            Storage::makeDirectory('localPhotos/', 8775, true);
+        }
+        $image=base64_decode($request->photo);
+        $filename=uniqid();
+        $path=storage_path('/app/localPhotos/'.$filename);
+        file_put_contents($path,$image);
+        $this->photo=$path;
+        /*$file = $request->file('photo');
+        $filename = rand().'.'.$file->getClientOriginalExtension();
+        $path = $file->storeAs('localPhotos', $filename);
+        $this->photo=$path; */
+        
         $this->save();
     }   
 
@@ -59,5 +73,4 @@ class Republic extends Model
     }
 
     
-
 }

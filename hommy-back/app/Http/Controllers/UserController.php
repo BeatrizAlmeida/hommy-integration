@@ -31,6 +31,40 @@ class UserController extends Controller
         return response()->json([$user]);
     }
 
+    public function updateUser(Request $request, $id){
+        $user = User::findOrFail($id);
+        if($request->name){
+            $user->name = $request->name;
+        }
+
+        if($request->email){
+            $user->email = $request->email;
+        }
+
+        if($request->telephone){
+            $user->telephone = $request->telephone;
+        }
+        
+        if($request->cpf){
+            $user->cpf = $request->cpf;
+        }
+
+        if($request->gender){
+            $user->gender = $request->gender;
+        }
+
+        if($request->birthday){
+            $user->birthday = $request->birthday;
+        }
+
+        if($request->republic_id){
+            $user->republic_id = $request->republic_id;
+        }
+
+        $user->save();
+        return response()->json($user);
+    }
+
     public function alugar($user_id, $republic_id){
         $user = User::findOrFail($user_id);
         $user->alugar($republic_id);
