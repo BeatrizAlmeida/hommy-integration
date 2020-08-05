@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Http\Requests\UserRequest;
 use Laravel\Passport\HasApiTokens;
+use App\Notifications\WelcomeUser;
 
 use Auth;
 use DB;
@@ -17,6 +18,7 @@ class PassportController extends Controller
         $newuser = new User;
         $newuser->createUser($request);
         $success['token']=$newuser->createToken('MyApp')->accessToken;
+        $newuser->notify(new WelcomeUser());
         return response()->json(['success'=> $success, 'user'=>$newuser], 200);
     }
 
